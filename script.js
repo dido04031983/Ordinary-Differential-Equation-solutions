@@ -1,17 +1,17 @@
 // dy=Ax+By
 // dx=Cx+Dy
 
-const Scale=5;
+let Scale=5;
+let ParametricStart=-2.5;
+let ParametricEnd=2.5;
+let NoOfLines=100;
 const Accuracy=63;
-const ParametricStart=-2.5;
-const ParametricEnd=2.5;
-const NoOfLines=100;
 const GraphWidth=2;
 const GraphColor="red";
 const DifferentialEquation={
   A:1,B:0,
   C:0,D:-1
-}
+};
 
 const MatrixMultiplication=function(Matrix_1,Matrix_2){
   const ResultantMatrix=[
@@ -79,13 +79,11 @@ const ctx=canvas.getContext("2d");
 
 canvas.width=this.innerWidth;
 canvas.height=this.innerHeight;
-
-const LastTouchUpdate={x:null,y:null};
 const WidthInverse=1/canvas.width;
 
-const PlotGraph=function(){
+const PlotGraph=function(PointerPosition){
   const Points=[];
-  const Position={x:Scale*(2*WidthInverse*LastTouchUpdate.x-1),y:Scale*WidthInverse*(-2*LastTouchUpdate.y+canvas.height)};
+  const Position={x:Scale*(2*WidthInverse*PointerPosition.x-1),y:Scale*WidthInverse*(-2*PointerPosition.y+canvas.height)};
   for(let i=0;NoOfLines>=i;i++){
     Points.push(OrdinaryDifferentialEquationExecuter(MatrixEquation,Position,i));
   }
@@ -101,27 +99,10 @@ const PlotGraph=function(){
   ctx.stroke();
 };
 
-let State="Free";
+let TouchUpdate=function(PointerPosition){
+  PlotGraph(PointerPosition);
+};
 
-this.addEventListener("touchstart",Event=>{
-  if(State=="Occupied"){
-    return;
-  }
-  LastTouchUpdate.x=Event.touches[0].clientX;
-  LastTouchUpdate.y=Event.touches[0].clientY;
-  PlotGraph();
-  State="Occupied";
-});
-
-this.addEventListener("touchmove",Event=>{
-  LastTouchUpdate.x=Event.touches[0].clientX;
-  LastTouchUpdate.y=Event.touches[0].clientY;
-  PlotGraph();
-  State="Occupied";
-});
-
-this.addEventListener("touchend",Event=>{
-  if(Event.touches.length==0){
-    State="Free";
-  }
-});
+let ZoomUpdate=function(ScaleFactor,PointerPosition){
+  // There's a bug with Scale variable that needs to be fixed.
+};
