@@ -1,8 +1,9 @@
+let InteractiveElement=this;
 let LastTouchUpdate={x:null,y:null};
 let LastZoomFingers={m:{x:null,y:null},n:{x:null,y:null},scale:1,angle:0,translation:{x:0,y:0}};
 let TouchState="Free",ZoomState="Free";
 
-this.addEventListener("touchstart",function(Event){
+InteractiveElement.addEventListener("touchstart",function(Event){
   if(Event.touches.length==1 && TouchState=="Free"){
     LastTouchUpdate.x=Event.touches[0].clientX;
     LastTouchUpdate.y=Event.touches[0].clientY;
@@ -28,7 +29,7 @@ this.addEventListener("touchstart",function(Event){
   }
 });
 
-this.addEventListener("touchmove",function(Event){
+InteractiveElement.addEventListener("touchmove",function(Event){
   if(Event.touches.length==1 && TouchState=="Occupied"){
     LastTouchUpdate.x=Event.touches[0].clientX;
     LastTouchUpdate.y=Event.touches[0].clientY;
@@ -53,7 +54,7 @@ this.addEventListener("touchmove",function(Event){
   }
 });
 
-this.addEventListener("touchend",function(Event){
+InteractiveElement.addEventListener("touchend",function(Event){
   if(Event.touches.length==0 && ZoomState=="Free"){
     TouchState="Free";
   }
