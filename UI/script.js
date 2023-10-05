@@ -1,5 +1,5 @@
 let LastTouchUpdate={x:null,y:null};
-let LastZoomFingers={m:{x:null,y:null},n:{x:null,y:null},scale:1,angle:0};
+let LastZoomFingers={m:{x:null,y:null},n:{x:null,y:null},scale:1,angle:0,translation:{x:0,y:0}};
 let TouchState="Free",ZoomState="Free";
 
 this.addEventListener("touchstart",function(Event){
@@ -35,8 +35,16 @@ this.addEventListener("touchmove",function(Event){
     TouchUpdate(LastTouchUpdate);
   }
   if(Event.touches.length==2 && ZoomState=="Occupied"){
-    LastZoomFingers.scale*=Math.sqrt(((Event.touches[0].clientX-Event.touches[1].clientX)**2+(Event.touches[0].clientY-Event.touches[1].clientY)**2)/((LastZoomFingers.m.x-LastZoomFingers.n.x)**2+(LastZoomFingers.m.y-LastZoomFingers.n.y)**2));
-    // Change in angle is not being calculated right now.
+    const CurrentXDist=Event.touches[0].clientX-Event.touches[1].clientX;
+    const CurrentYDist=Event.touches[0].clientY-Event.touches[1].clientY;
+    const LastXDist=LastZoomFingers.m.x-LastZoomFingers.n.x;
+    const LastYDist=LastZoomFingers.m.y-LastZoomFingers.n.y;
+    LastZoomFingers.scale*=Math.sqrt((CurrentXDist**2+CurrentYDist**2)/(LastXDist**2+LastYDist**2));
+    if(CurrentXDist!=0 && LastXDist!=0){
+      LastZoomFingers.angle-=Math.atan2(CurrentYDist,CurrentXDist)-Math.atan2(LastYDist,LastXDist);
+    }
+    LastZoomFingers.translation.x+=(Event.touches[0].clientX+Event.touches[1].clientX-LastZoomFingers.m.x-LastZoomFingers.n.x)/2;
+    LastZoomFingers.translation.y+=(Event.touches[0].clientY+Event.touches[1].clientY-LastZoomFingers.m.y-LastZoomFingers.n.y)/2;
     ZoomUpdate(LastZoomFingers,LastTouchUpdate);
     LastZoomFingers.m.x=Event.touches[0].clientX;
     LastZoomFingers.m.y=Event.touches[0].clientY;
