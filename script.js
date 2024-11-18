@@ -1,5 +1,5 @@
-// dy=Ax+By
-// dx=Cx+Dy
+// dy=Ax+By+E
+// dx=Cx+Dy+F
 
 let Scale=5;
 let ParametricStart=-2.5;
@@ -9,9 +9,13 @@ const Accuracy=63;
 const GraphWidth=2;
 const GraphColor="red";
 const DifferentialEquation={
-  A:1,B:0,
-  C:0,D:-1
+  A:-1,B:0,E:1,
+  C:0,D:1,F:-1
 };
+const ShiftingVar={
+  P:-(DifferentialEquation.B*DifferentialEquation.F-DifferentialEquation.D*DifferentialEquation.E)/(DifferentialEquation.A*DifferentialEquation.D-DifferentialEquation.C*DifferentialEquation.B),
+  Q:(DifferentialEquation.A*DifferentialEquation.F-DifferentialEquation.C*DifferentialEquation.E)/(DifferentialEquation.A*DifferentialEquation.D-DifferentialEquation.C*DifferentialEquation.B)
+}
 
 const MatrixMultiplication=function(Matrix_1,Matrix_2){
   const ResultantMatrix=[
@@ -83,9 +87,10 @@ const WidthInverse=1/canvas.width;
 
 const PlotGraph=function(PointerPosition){
   const Points=[];
-  const Position={x:Scale*(2*WidthInverse*PointerPosition.x-1),y:Scale*WidthInverse*(-2*PointerPosition.y+canvas.height)};
+  const Position={x:Scale*(2*WidthInverse*PointerPosition.x-1)+ShiftingVar.P,y:Scale*WidthInverse*(-2*PointerPosition.y+canvas.height)+ShiftingVar.Q};
   for(let i=0;NoOfLines>=i;i++){
-    Points.push(OrdinaryDifferentialEquationExecuter(MatrixEquation,Position,i));
+    ResultingPos=OrdinaryDifferentialEquationExecuter(MatrixEquation,Position,i);
+    Points.push({x:ResultingPos.x-ShiftingVar.P,y:ResultingPos.y-ShiftingVar.Q});
   }
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.strokeStyle=GraphColor;
